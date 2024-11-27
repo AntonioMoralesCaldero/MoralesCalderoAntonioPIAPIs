@@ -14,38 +14,25 @@ import java.util.List;
 public class ApiCatalogoController {
 
     private final VehiculoService vehiculoService;
-    private final AuthApiController authApiController;
 
     @Autowired
-    public ApiCatalogoController(VehiculoService vehiculoService, AuthApiController authApiController) {
+    public ApiCatalogoController(VehiculoService vehiculoService) {
         this.vehiculoService = vehiculoService;
-        this.authApiController = authApiController;
     }
 
     @GetMapping
-    public ResponseEntity<List<VehiculoModel>> getAllVehiculos(@RequestHeader("Authorization") String token) {
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        if (authApiController.validateToken(token) != null) {
-            return ResponseEntity.ok(vehiculoService.getAllVehiculos());
-        } else {
-            return ResponseEntity.status(401).body(null);
-        }
+    public ResponseEntity<List<VehiculoModel>> getAllVehiculos() {
+        List<VehiculoModel> vehiculos = vehiculoService.getAllVehiculos();
+        return ResponseEntity.ok(vehiculos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VehiculoModel> getVehiculoById(@RequestHeader("Authorization") String token,
-                                                         @PathVariable int id) {
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        if (authApiController.validateToken(token) != null) {
-            return ResponseEntity.ok(vehiculoService.getVehiculoById(id));
+    public ResponseEntity<VehiculoModel> getVehiculoById(@PathVariable int id) {
+        VehiculoModel vehiculo = vehiculoService.getVehiculoById(id);
+        if (vehiculo != null) {
+            return ResponseEntity.ok(vehiculo);
         } else {
-            return ResponseEntity.status(401).body(null);
+            return ResponseEntity.notFound().build();
         }
     }
 }

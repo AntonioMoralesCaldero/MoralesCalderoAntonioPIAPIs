@@ -13,13 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthApiController {
+public class ApiLoginController {
 
     private final UsuarioService usuarioService;
     private final Map<String, Integer> activeTokens = new HashMap<>();
 
     @Autowired
-    public AuthApiController(UsuarioService usuarioService) {
+    public ApiLoginController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
@@ -38,9 +38,11 @@ public class AuthApiController {
                                                      @RequestParam("password") String password) {
         UsuarioModel usuarioModel = usuarioService.login(username, password);
         if (usuarioModel != null) {
+            // Generar un token único para el usuario
             String token = UUID.randomUUID().toString();
             activeTokens.put(token, usuarioModel.getId());
 
+            // Construir respuesta
             Map<String, String> response = new HashMap<>();
             response.put("message", "Inicio de sesión exitoso.");
             response.put("token", token);
@@ -61,8 +63,6 @@ public class AuthApiController {
     }
 
     public Integer validateToken(String token) {
-        System.out.println("Validando token: " + token);
         return activeTokens.get(token);
     }
-
 }
