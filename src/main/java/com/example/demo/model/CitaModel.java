@@ -19,19 +19,18 @@ public class CitaModel {
     }
 
     public CitaModel(int id, String problema, LocalDateTime fechaCita, String estado, String diagnostico,
-                     LocalDateTime fechaReparacionFinalizada, UsuarioModel usuario, Integer usuarioId,
-                     int vehiculoOcasionId, boolean valorada) {
-        this.id = id;
-        this.problema = problema;
-        this.fechaCita = fechaCita;
-        this.estado = estado;
-        this.diagnostico = diagnostico;
-        this.fechaReparacionFinalizada = fechaReparacionFinalizada;
-        this.usuario = usuario;
-        this.usuarioId = usuarioId;
-        this.vehiculoOcasionId = vehiculoOcasionId;
-        this.valorada = valorada;
-    }
+            LocalDateTime fechaReparacionFinalizada, UsuarioModel usuario, int vehiculoOcasionId, boolean valorada) {
+    	this.id = id;
+    	this.problema = problema;
+    	this.fechaCita = fechaCita;
+    	this.estado = estado;
+    	this.diagnostico = diagnostico;
+    	this.fechaReparacionFinalizada = fechaReparacionFinalizada;
+    	this.usuario = usuario;
+    	this.vehiculoOcasionId = vehiculoOcasionId;
+    	this.valorada = valorada;
+}
+
 
     public int getId() {
         return id;

@@ -1,4 +1,3 @@
-//Autor: Antonio Miguel Morales Caldero
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Cita;
