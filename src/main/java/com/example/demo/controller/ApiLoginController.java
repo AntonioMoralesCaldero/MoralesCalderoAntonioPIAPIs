@@ -38,11 +38,9 @@ public class ApiLoginController {
                                                      @RequestParam("password") String password) {
         UsuarioModel usuarioModel = usuarioService.login(username, password);
         if (usuarioModel != null) {
-            // Generar un token único para el usuario
             String token = UUID.randomUUID().toString();
             activeTokens.put(token, usuarioModel.getId());
 
-            // Construir respuesta
             Map<String, String> response = new HashMap<>();
             response.put("message", "Inicio de sesión exitoso.");
             response.put("token", token);
