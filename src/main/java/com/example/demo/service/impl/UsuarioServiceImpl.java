@@ -1,23 +1,23 @@
-// Autor: Antonio Miguel Morales Caldero
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Usuario;
 import com.example.demo.model.UsuarioModel;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.UsuarioService;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service("usuarioService")
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+
+    // Mapa para almacenar los tokens activos
+    private final Map<String, Integer> activeTokens = new HashMap<>();
 
     @Autowired
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
@@ -59,7 +59,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario findByUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }
-    
+
     @Override
     public Usuario findUsuarioById(int id) {
         return usuarioRepository.findById(id).orElse(null);
@@ -72,6 +72,24 @@ public class UsuarioServiceImpl implements UsuarioService {
             return convertirEntidadAModelo(usuario);
         }
         return null;
+    }
+
+    @Override
+    public String generateToken(int userId) {
+        // Generar un token único
+        String token = UUID.randomUUID().toString();
+        activeTokens.put(token, userId);
+        return token;
+    }
+
+    @Override
+    public Integer validateToken(String token) {
+        return activeTokens.get(token);
+    }
+
+    @Override
+    public void logout(String token) {
+        activeTokens.remove(token);
     }
 
     private UsuarioModel convertirEntidadAModelo(Usuario usuario) {

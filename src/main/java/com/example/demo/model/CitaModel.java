@@ -1,4 +1,3 @@
-// Autor: Antonio Miguel Morales Caldero
 package com.example.demo.model;
 
 import java.time.LocalDateTime;
@@ -11,7 +10,8 @@ public class CitaModel {
     private String estado;
     private String diagnostico;
     private LocalDateTime fechaReparacionFinalizada;
-    private UsuarioModel usuario;
+    private UsuarioModel usuario; 
+    private Integer usuarioId;   
     private int vehiculoOcasionId;
     private boolean valorada;
 
@@ -19,7 +19,8 @@ public class CitaModel {
     }
 
     public CitaModel(int id, String problema, LocalDateTime fechaCita, String estado, String diagnostico,
-                     LocalDateTime fechaReparacionFinalizada, UsuarioModel usuario, int vehiculoOcasionId, boolean valorada) {
+                     LocalDateTime fechaReparacionFinalizada, UsuarioModel usuario, Integer usuarioId,
+                     int vehiculoOcasionId, boolean valorada) {
         this.id = id;
         this.problema = problema;
         this.fechaCita = fechaCita;
@@ -27,6 +28,7 @@ public class CitaModel {
         this.diagnostico = diagnostico;
         this.fechaReparacionFinalizada = fechaReparacionFinalizada;
         this.usuario = usuario;
+        this.usuarioId = usuarioId;
         this.vehiculoOcasionId = vehiculoOcasionId;
         this.valorada = valorada;
     }
@@ -85,6 +87,14 @@ public class CitaModel {
 
     public void setUsuario(UsuarioModel usuario) {
         this.usuario = usuario;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public int getVehiculoOcasionId() {

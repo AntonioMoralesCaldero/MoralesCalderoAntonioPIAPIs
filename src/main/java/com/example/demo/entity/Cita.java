@@ -1,4 +1,3 @@
-// Autor: Antonio Miguel Morales Caldero
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -9,23 +8,25 @@ public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     private String problema;
-    
+
     private LocalDateTime fechaCita;
-    
+
     private String estado;
-    
+
     private String diagnostico;
-    
+
     private LocalDateTime fechaReparacionFinalizada;
 
     private boolean valorada;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehiculo_ocasion_id", nullable = false)
     private Vehiculo vehiculoOcasion;
 
     public int getId() {
@@ -98,5 +99,5 @@ public class Cita {
 
     public void setVehiculoOcasion(Vehiculo vehiculoOcasion) {
         this.vehiculoOcasion = vehiculoOcasion;
-    } 
+    }
 }
