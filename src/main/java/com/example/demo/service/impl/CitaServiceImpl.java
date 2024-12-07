@@ -1,3 +1,4 @@
+//Autor: Antonio Miguel Morales Caldero
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Cita;
@@ -31,7 +32,6 @@ public class CitaServiceImpl implements CitaService {
     public CitaModel crearCita(CitaModel citaModel) {
         Cita cita = new Cita();
         cita.setProblema(citaModel.getProblema());
-        cita.setFechaCita(citaModel.getFechaCita());
         cita.setEstado("pendiente");
         cita.setValorada(false);
 
@@ -48,6 +48,7 @@ public class CitaServiceImpl implements CitaService {
         cita = citaRepository.save(cita);
         return convertToModel(cita);
     }
+
 
     @Override
     public void cancelarCita(int citaId) {
@@ -82,6 +83,10 @@ public class CitaServiceImpl implements CitaService {
             cita.setFechaReparacionFinalizada(citaModel.getFechaReparacionFinalizada());
         }
 
+        if (citaModel.getFechaCita() != null) { 
+            cita.setFechaCita(citaModel.getFechaCita());
+        }
+
         if (citaModel.getVehiculoOcasionId() != 0) {
             Vehiculo vehiculoOcasion = vehiculoRepository.findById(citaModel.getVehiculoOcasionId())
                     .orElseThrow(() -> new RuntimeException("Vehículo de ocasión no encontrado"));
@@ -90,6 +95,7 @@ public class CitaServiceImpl implements CitaService {
 
         citaRepository.save(cita);
     }
+
 
     @Override
     public List<CitaModel> obtenerTodasCitas() {

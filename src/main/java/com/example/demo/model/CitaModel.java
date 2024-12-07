@@ -1,3 +1,4 @@
+// Autor: Antonio Miguel Morales Caldero
 package com.example.demo.model;
 
 import java.time.LocalDateTime;
@@ -10,27 +11,25 @@ public class CitaModel {
     private String estado;
     private String diagnostico;
     private LocalDateTime fechaReparacionFinalizada;
-    private UsuarioModel usuario; 
-    private Integer usuarioId;   
-    private int vehiculoOcasionId;
+    private UsuarioModel usuario;
+    private Integer vehiculoOcasionId;
     private boolean valorada;
 
     public CitaModel() {
     }
 
     public CitaModel(int id, String problema, LocalDateTime fechaCita, String estado, String diagnostico,
-            LocalDateTime fechaReparacionFinalizada, UsuarioModel usuario, int vehiculoOcasionId, boolean valorada) {
-    	this.id = id;
-    	this.problema = problema;
-    	this.fechaCita = fechaCita;
-    	this.estado = estado;
-    	this.diagnostico = diagnostico;
-    	this.fechaReparacionFinalizada = fechaReparacionFinalizada;
-    	this.usuario = usuario;
-    	this.vehiculoOcasionId = vehiculoOcasionId;
-    	this.valorada = valorada;
-}
-
+                     LocalDateTime fechaReparacionFinalizada, UsuarioModel usuario, Integer vehiculoOcasionId, boolean valorada) {
+        this.id = id;
+        this.problema = problema;
+        this.fechaCita = fechaCita;
+        this.estado = estado;
+        this.diagnostico = diagnostico;
+        this.fechaReparacionFinalizada = fechaReparacionFinalizada;
+        this.usuario = usuario;
+        this.vehiculoOcasionId = vehiculoOcasionId;
+        this.valorada = valorada;
+    }
 
     public int getId() {
         return id;
@@ -88,19 +87,11 @@ public class CitaModel {
         this.usuario = usuario;
     }
 
-    public Integer getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public int getVehiculoOcasionId() {
+    public Integer getVehiculoOcasionId() {
         return vehiculoOcasionId;
     }
 
-    public void setVehiculoOcasionId(int vehiculoOcasionId) {
+    public void setVehiculoOcasionId(Integer vehiculoOcasionId) {
         this.vehiculoOcasionId = vehiculoOcasionId;
     }
 
