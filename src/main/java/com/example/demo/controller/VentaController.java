@@ -7,6 +7,7 @@ import com.example.demo.service.CloudinaryService;
 import com.example.demo.service.OfertaService;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.service.VehiculoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,19 +61,26 @@ public class VentaController {
         return ResponseEntity.ok(cochesComprados);
     }
 
-    @PostMapping(value = "/vender-tu-coche/agregar", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/vender-tu-coche/agregar", consumes = "multipart/form-data")
     public ResponseEntity<?> agregarVehiculo(
             @RequestHeader("Authorization") String token,
-            @RequestPart("datosVehiculo") OfertaModel ofertaModel,
+            @RequestPart("datosVehiculo") String datosVehiculo,
             @RequestPart("imagenFile") MultipartFile imagenFile) {
 
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token no proporcionado o inválido");
         }
-
         String username = jwtUtil.extractUsername(token.substring(7));
         if (username == null || !jwtUtil.isTokenValid(token.substring(7))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o expirado");
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        OfertaModel ofertaModel;
+        try {
+            ofertaModel = objectMapper.readValue(datosVehiculo, OfertaModel.class);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al procesar los datos del vehículo");
         }
 
         try {
