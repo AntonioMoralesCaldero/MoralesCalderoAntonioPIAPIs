@@ -63,6 +63,8 @@ public class VentaController {
     public ResponseEntity<?> agregarVehiculo(@RequestPart("oferta") OfertaModel ofertaModel,
                                              @RequestPart("imagenFile") MultipartFile imagenFile,
                                              @RequestHeader("Authorization") String authHeader) {
+        System.out.println("Oferta recibida: " + ofertaModel);
+        System.out.println("Archivo recibido: " + imagenFile.getOriginalFilename());
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(401).body("Token no presente o inválido.");
         }
