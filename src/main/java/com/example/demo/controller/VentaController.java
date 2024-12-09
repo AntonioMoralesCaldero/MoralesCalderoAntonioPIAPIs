@@ -9,6 +9,7 @@ import com.example.demo.service.UsuarioService;
 import com.example.demo.service.VehiculoService;
 import com.example.demo.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,39 +61,31 @@ public class VentaController {
     }
 
     @PostMapping("/vender-tu-coche/agregar")
-    public ResponseEntity<?> agregarVehiculo(@RequestPart("oferta") OfertaModel ofertaModel,
-                                             @RequestPart("imagenFile") MultipartFile imagenFile,
-                                             @RequestHeader("Authorization") String authHeader) {
-        System.out.println("Oferta recibida: " + ofertaModel);
-        System.out.println("Archivo recibido: " + imagenFile.getOriginalFilename());
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Token no presente o inválido.");
+    public ResponseEntity<?> agregarVehiculo(
+            @RequestHeader("Authorization") String token,
+            @RequestPart("datosVehiculo") OfertaModel ofertaModel,
+            @RequestPart("imagenFile") MultipartFile imagenFile) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token no proporcionado o inválido");
         }
 
-        String token = authHeader.substring(7);
-        if (!jwtUtil.isTokenValid(token)) {
-            return ResponseEntity.status(401).body("Token inválido o expirado.");
-        }
-
-        String username = jwtUtil.extractUsername(token);
-        Usuario usuario = usuarioService.findByUsername(username);
-
-        if (usuario == null) {
-            return ResponseEntity.status(404).body("Usuario no encontrado.");
+        String username = jwtUtil.extractUsername(token.substring(7));
+        if (username == null || !jwtUtil.isTokenValid(token.substring(7))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o expirado");
         }
 
         try {
             String imageUrl = cloudinaryService.uploadImage(imagenFile);
             ofertaModel.setImagen(imageUrl);
         } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error al subir la imagen.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al subir la imagen");
         }
 
         ofertaModel.setEstado("PENDIENTE");
         ofertaService.guardarOferta(ofertaModel);
 
-        return ResponseEntity.ok("Oferta creada exitosamente.");
+        return ResponseEntity.ok("Vehículo agregado con éxito");
     }
 
     @GetMapping("/venta")
