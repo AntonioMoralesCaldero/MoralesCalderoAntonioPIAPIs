@@ -44,4 +44,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al registrar el usuario: " + e.getMessage());
         }
     }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body("Token no presente o inválido.");
+        }
+
+        return ResponseEntity.ok("Sesión cerrada con éxito. Por favor, elimina el token del cliente.");
+    }
 }
