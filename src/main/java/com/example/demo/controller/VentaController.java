@@ -60,7 +60,7 @@ public class VentaController {
         return ResponseEntity.ok(cochesComprados);
     }
 
-    @PostMapping("/vender-tu-coche/agregar")
+    @PostMapping(value = "/vender-tu-coche/agregar", consumes = {"multipart/form-data"})
     public ResponseEntity<?> agregarVehiculo(
             @RequestHeader("Authorization") String token,
             @RequestPart("datosVehiculo") OfertaModel ofertaModel,
