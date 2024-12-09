@@ -7,13 +7,13 @@ import com.example.demo.service.CloudinaryService;
 import com.example.demo.service.OfertaService;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.service.VehiculoService;
+import com.example.demo.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -24,23 +24,33 @@ public class VentaController {
     private final UsuarioService usuarioService;
     private final OfertaService ofertaService;
     private final CloudinaryService cloudinaryService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public VentaController(VehiculoService vehiculoService, UsuarioService usuarioService,
-                              OfertaService ofertaService, CloudinaryService cloudinaryService) {
+                            OfertaService ofertaService, CloudinaryService cloudinaryService,
+                            JwtUtil jwtUtil) {
         this.vehiculoService = vehiculoService;
         this.usuarioService = usuarioService;
         this.ofertaService = ofertaService;
         this.cloudinaryService = cloudinaryService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/mis-coches")
-    public ResponseEntity<?> obtenerCochesDelUsuario(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(401).body("Usuario no autenticado.");
+    public ResponseEntity<?> obtenerCochesDelUsuario(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Token no presente o inválido.");
         }
 
-        Usuario usuario = usuarioService.findByUsername(principal.getName());
+        String token = authHeader.substring(7);
+        if (!jwtUtil.isTokenValid(token)) {
+            return ResponseEntity.status(401).body("Token inválido o expirado.");
+        }
+
+        String username = jwtUtil.extractUsername(token);
+        Usuario usuario = usuarioService.findByUsername(username);
+
         if (usuario == null) {
             return ResponseEntity.status(404).body("Usuario no encontrado.");
         }
@@ -52,12 +62,19 @@ public class VentaController {
     @PostMapping("/vender-tu-coche/agregar")
     public ResponseEntity<?> agregarVehiculo(@RequestPart("oferta") OfertaModel ofertaModel,
                                              @RequestPart("imagenFile") MultipartFile imagenFile,
-                                             Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(401).body("Usuario no autenticado.");
+                                             @RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Token no presente o inválido.");
         }
 
-        Usuario usuario = usuarioService.findByUsername(principal.getName());
+        String token = authHeader.substring(7);
+        if (!jwtUtil.isTokenValid(token)) {
+            return ResponseEntity.status(401).body("Token inválido o expirado.");
+        }
+
+        String username = jwtUtil.extractUsername(token);
+        Usuario usuario = usuarioService.findByUsername(username);
+
         if (usuario == null) {
             return ResponseEntity.status(404).body("Usuario no encontrado.");
         }
