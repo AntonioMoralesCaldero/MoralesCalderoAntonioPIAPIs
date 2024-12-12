@@ -139,15 +139,20 @@ public class TallerController {
         CitaModel cita = citaService.obtenerCitaPorId(id);
 
         if (cita == null || !cita.isValorada()) {
-            return ResponseEntity.badRequest().body("No se puede actualizar la valoración.");
+            return ResponseEntity.badRequest().body("La cita no puede ser valorada.");
         }
 
-        valoracionModel.setCitaId(cita.getId());
-        valoracionModel.setUsuarioId(usuario.getId());
+        ValoracionModel valoracion = valoracionService.obtenerValoracionPorCitaId(cita.getId());
+        if (valoracion == null) {
+            return ResponseEntity.badRequest().body("Valoración no encontrada.");
+        }
+
+        valoracionModel.setId(valoracion.getId());
         valoracionService.actualizarValoracion(valoracionModel);
 
         return ResponseEntity.ok("¡Valoración actualizada con éxito!");
     }
+
 
     private String validarToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
