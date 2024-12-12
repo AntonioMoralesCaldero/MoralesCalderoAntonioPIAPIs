@@ -92,10 +92,12 @@ public class TallerController {
 
         valoracionModel.setCitaId(cita.getId());
         valoracionModel.setUsuarioId(usuario.getId());
+
         valoracionService.guardarValoracion(valoracionModel);
 
         cita.setValorada(true);
         citaService.actualizarCita(cita);
+
         return ResponseEntity.ok("¡Valoración guardada con éxito!");
     }
 
@@ -106,6 +108,45 @@ public class TallerController {
 
         List<CitaModel> citasNoValoradas = citaService.obtenerCitasNoValoradasPorUsuario(usuario.getId());
         return ResponseEntity.ok(citasNoValoradas);
+    }
+
+    @GetMapping("/citas/{id}/ver-valoracion")
+    public ResponseEntity<?> verValoracion(@RequestHeader("Authorization") String authHeader, @PathVariable int id) {
+        String username = validarToken(authHeader);
+        Usuario usuario = usuarioRepository.findByUsername(username);
+
+        CitaModel cita = citaService.obtenerCitaPorId(id);
+
+        if (cita == null || !cita.getEstado().equalsIgnoreCase("terminado") || !cita.isValorada()) {
+            return ResponseEntity.badRequest().body("La cita no tiene valoraciones.");
+        }
+
+        ValoracionModel valoracion = valoracionService.obtenerValoracionPorCitaId(cita.getId());
+        if (valoracion == null) {
+            return ResponseEntity.badRequest().body("Valoración no encontrada.");
+        }
+
+        return ResponseEntity.ok(valoracion);
+    }
+
+    @PostMapping("/citas/{id}/guardar-valoracion")
+    public ResponseEntity<?> actualizarValoracion(@RequestHeader("Authorization") String authHeader,
+                                                  @PathVariable int id,
+                                                  @RequestBody ValoracionModel valoracionModel) {
+        String username = validarToken(authHeader);
+        Usuario usuario = usuarioRepository.findByUsername(username);
+
+        CitaModel cita = citaService.obtenerCitaPorId(id);
+
+        if (cita == null || !cita.isValorada()) {
+            return ResponseEntity.badRequest().body("No se puede actualizar la valoración.");
+        }
+
+        valoracionModel.setCitaId(cita.getId());
+        valoracionModel.setUsuarioId(usuario.getId());
+        valoracionService.actualizarValoracion(valoracionModel);
+
+        return ResponseEntity.ok("¡Valoración actualizada con éxito!");
     }
 
     private String validarToken(String authHeader) {
@@ -120,4 +161,5 @@ public class TallerController {
 
         return jwtUtil.extractUsername(token);
     }
+   
 }
